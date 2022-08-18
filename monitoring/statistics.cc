@@ -168,6 +168,22 @@ const std::vector<std::pair<Tickers, std::string>> TickersNameMap = {
     {NUMBER_MULTIGET_KEYS_FOUND, "rocksdb.number.multiget.keys.found"},
     {NO_ITERATOR_CREATED, "rocksdb.num.iterator.created"},
     {NO_ITERATOR_DELETED, "rocksdb.num.iterator.deleted"},
+    {  FILESEARCH_COUNT, "hello.filesearch.count"},
+    {  FILESEARCH_MISS_COUNT, "hello.filesearch.miss.count"},
+    {  FILTER_COUNT, "hello.filter.count" },
+    {  FILTER_MISS_COUNT, "hello.filter.miss.count" },
+    {  INDEX_COUNT, "hello.index.count" },
+    {  INDEX_MISS_COUNT, "hello.index.miss.count" },
+    {  BLOCK_COUNT, "hello.block.count"},
+    {  BLOCK_MISS_COUNT, "hello.block.miss.count"},
+    {FILESEARCH_MS, "hello.filesearch.ms"},
+    {FILESEARCH_MISS_MS, "hello.filesearch.miss.ms"},
+    {FILTER_MS, "hello.filter.ms"},
+    {FILTER_MISS_MS, "hello.filter.miss.ms"},
+    {INDEX_MS, "hello.index.ms"},
+    {INDEX_MISS_MS, "hello.index.miss.ms"},
+    {BLOCK_MS, "hello.block.ms"},
+    {BLOCK_MISS_MS, "hello.block.miss.ms"},
 };
 
 const std::vector<std::pair<Histograms, std::string>> HistogramsNameMap = {
@@ -217,6 +233,7 @@ const std::vector<std::pair<Histograms, std::string>> HistogramsNameMap = {
     {BLOB_DB_COMPRESSION_MICROS, "rocksdb.blobdb.compression.micros"},
     {BLOB_DB_DECOMPRESSION_MICROS, "rocksdb.blobdb.decompression.micros"},
     {FLUSH_TIME, "rocksdb.db.flush.micros"},
+
 };
 
 std::shared_ptr<Statistics> CreateDBStatistics() {

@@ -326,6 +326,28 @@ enum Tickers : uint32_t {
 
   NO_ITERATOR_CREATED,  // number of iterators created
   NO_ITERATOR_DELETED,  // number of iterators deleted
+   //
+  FILESEARCH_COUNT,
+  FILESEARCH_MISS_COUNT,
+  FILTER_COUNT,
+  FILTER_MISS_COUNT,
+  INDEX_COUNT,
+  INDEX_MISS_COUNT,
+  BLOCK_COUNT,
+  BLOCK_MISS_COUNT,
+  //
+
+//
+  FILESEARCH_MS,
+  FILESEARCH_MISS_MS,
+  FILTER_MS,
+  FILTER_MISS_MS,
+  INDEX_MS,
+  INDEX_MISS_MS,
+  BLOCK_MS,
+  BLOCK_MISS_MS,
+ //
+
   TICKER_ENUM_MAX
 };
 
@@ -413,6 +435,7 @@ enum Histograms : uint32_t {
   BLOB_DB_DECOMPRESSION_MICROS,
   // Time spent flushing memtable to disk
   FLUSH_TIME,
+
 
   HISTOGRAM_ENUM_MAX,
 };
