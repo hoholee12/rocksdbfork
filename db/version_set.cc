@@ -1215,13 +1215,44 @@ void Version::Get(const ReadOptions& read_options, const LookupKey& k,
     pinned_iters_mgr.StartPinning();
   }
 
+  
+
+  static struct timespec telapsed = {0, 0};
+  struct timespec tstart = {0, 0}, tend = {0, 0};
+  static struct timespec telapsed_waste = {0, 0};
+  struct timespec tstart_waste = {0, 0}, tend_waste = {0, 0};
+
+  int countme = 0;
+  
+  static int wastecount = 0;
+
+
+  static int counttt = 0;
+  static int countt = 0;
+  if(++countt >= 10000){
+    counttt += countt;
+    countt = 0;
+    printf("file search access after %d times, %ld milliseconds elapsed.\n", counttt, telapsed.tv_sec * 1000 + telapsed.tv_nsec / 1000000);
+    printf("file search wasted %d times, %ld milliseconds elapsed.\n", wastecount, telapsed_waste.tv_sec * 1000 + telapsed_waste.tv_nsec / 1000000);
+  }
+
+  clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &tstart);
+
+
   FilePicker fp(
       storage_info_.files_, user_key, ikey, &storage_info_.level_files_brief_,
       storage_info_.num_non_empty_levels_, &storage_info_.file_indexer_,
       user_comparator(), internal_comparator());
   FdWithKeyRange* f = fp.GetNextFile();
 
+
+  clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &tend);
+  telapsed.tv_sec += (tend.tv_sec - tstart.tv_sec);
+  telapsed.tv_nsec += (tend.tv_nsec - tstart.tv_nsec);
+
+
   while (f != nullptr) {
+    countme++;
     if (*max_covering_tombstone_seq > 0) {
       // The remaining files we look at will only contain covered keys, so we
       // stop here.
@@ -1241,7 +1272,8 @@ void Version::Get(const ReadOptions& read_options, const LookupKey& k,
         cfd_->internal_stats()->GetFileReadHist(fp.GetHitFileLevel()),
         IsFilterSkipped(static_cast<int>(fp.GetHitFileLevel()),
                         fp.IsHitFileLastInLevel()),
-        fp.GetCurrentLevel());
+        fp.GetCurrentLevel(),
+        (countme > 1) ? true : false);
     // TODO: examine the behavior for corrupted key
     if (timer_enabled) {
       PERF_COUNTER_BY_LEVEL_ADD(get_from_table_nanos, timer.ElapsedNanos(),
@@ -1288,7 +1320,13 @@ void Version::Get(const ReadOptions& read_options, const LookupKey& k,
             "rocksdb::blob_db::BlobDB instead.");
         return;
     }
+    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &tstart_waste);
     f = fp.GetNextFile();
+
+    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &tend_waste);
+    telapsed_waste.tv_sec += (tend_waste.tv_sec - tstart_waste.tv_sec);
+    telapsed_waste.tv_nsec += (tend_waste.tv_nsec - tstart_waste.tv_nsec);
+    if(f != nullptr) wastecount++;
   }
 
   if (db_statistics_ != nullptr) {

@@ -84,7 +84,7 @@ class TableReader {
   virtual Status Get(const ReadOptions& readOptions, const Slice& key,
                      GetContext* get_context,
                      const SliceTransform* prefix_extractor,
-                     bool skip_filters = false) = 0;
+                     bool skip_filters = false, bool waste = false) = 0;
 
   // Prefetch data corresponding to a give range of keys
   // Typically this functionality is required for table implementations that

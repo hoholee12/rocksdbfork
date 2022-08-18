@@ -74,7 +74,7 @@ class TableCache {
              GetContext* get_context,
              const SliceTransform* prefix_extractor = nullptr,
              HistogramImpl* file_read_hist = nullptr, bool skip_filters = false,
-             int level = -1);
+             int level = -1, bool waste = false);
 
   // Evict any entry for the specified file number
   static void Evict(Cache* cache, uint64_t file_number);
