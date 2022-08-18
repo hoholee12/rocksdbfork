@@ -97,6 +97,7 @@ Status TableCache::GetTableReader(
     HistogramImpl* file_read_hist, std::unique_ptr<TableReader>* table_reader,
     const SliceTransform* prefix_extractor, bool skip_filters, int level,
     bool prefetch_index_and_filter_in_cache, bool for_compaction) {
+      printf("sst level: %d created\n", level);
   std::string fname =
       TableFileName(ioptions_.cf_paths, fd.GetNumber(), fd.GetPathId());
   std::unique_ptr<RandomAccessFile> file;

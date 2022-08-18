@@ -317,8 +317,6 @@ DEFINE_string(
 
 DEFINE_int64(num, 1000000, "Number of key/values to place in database");
 
-DEFINE_int64(ycsb_workload_num, 1000000,"");
-
 DEFINE_bool(YCSB_uniform_distribution, false, "Uniform key distribution for YCSB");
 
 DEFINE_int64(numdistinct, 1000,
@@ -5283,7 +5281,7 @@ void VerifyDBFromDB(std::string& truth_db_name) {
 
 		int64_t reads_done = 0;
 		int64_t writes_done = 0;
-		Duration duration(FLAGS_duration, FLAGS_ycsb_workload_num);
+		Duration duration(FLAGS_duration, FLAGS_num);
 
 		std::unique_ptr<const char[]> key_guard;
 		Slice key = AllocateKey(&key_guard);
@@ -5364,7 +5362,7 @@ void VerifyDBFromDB(std::string& truth_db_name) {
 		char msg[100];
 		snprintf(msg, sizeof(msg), "( reads:%" PRIu64 " writes:%" PRIu64 \
 			" total:%" PRIu64 " found:%" PRIu64 ")",
-			reads_done, writes_done, FLAGS_ycsb_workload_num, found);
+			reads_done, writes_done, FLAGS_num, found);
 		thread->stats.AddMessage(msg);
 	    }
 	    // Workload A: Update heavy workload
@@ -5447,7 +5445,7 @@ void VerifyDBFromDB(std::string& truth_db_name) {
 
 		int64_t reads_done = 0;
 		int64_t writes_done = 0;
-		Duration duration(FLAGS_duration, FLAGS_ycsb_workload_num);
+		Duration duration(FLAGS_duration, FLAGS_num);
 
 		std::unique_ptr<const char[]> key_guard;
 		Slice key = AllocateKey(&key_guard);
@@ -5529,7 +5527,7 @@ void VerifyDBFromDB(std::string& truth_db_name) {
 		char msg[100];
 		snprintf(msg, sizeof(msg), "( reads:%" PRIu64 " writes:%" PRIu64 \
 			" total:%" PRIu64 " found:%" PRIu64 ")",
-			reads_done, writes_done, FLAGS_ycsb_workload_num, found);
+			reads_done, writes_done, FLAGS_num, found);
 		thread->stats.AddMessage(msg);
 	    }
 
@@ -5613,7 +5611,7 @@ void VerifyDBFromDB(std::string& truth_db_name) {
 
 		int64_t reads_done = 0;
 		int64_t writes_done = 0;
-		Duration duration(FLAGS_duration, FLAGS_ycsb_workload_num);
+		Duration duration(FLAGS_duration, FLAGS_num);
 
 		std::unique_ptr<const char[]> key_guard;
 		Slice key = AllocateKey(&key_guard);
@@ -5696,7 +5694,7 @@ void VerifyDBFromDB(std::string& truth_db_name) {
 		char msg[100];
 		snprintf(msg, sizeof(msg), "( reads:%" PRIu64 " writes:%" PRIu64 \
 			" total:%" PRIu64 " found:%" PRIu64 ")",
-			reads_done, writes_done, FLAGS_ycsb_workload_num, found);
+			reads_done, writes_done, FLAGS_num, found);
 		thread->stats.AddMessage(msg);
 	    }
 
@@ -5780,7 +5778,7 @@ void VerifyDBFromDB(std::string& truth_db_name) {
 		uint64_t per_op_start_time = 0;
 		int64_t reads_done = 0;
 		int64_t writes_done = 0;
-		Duration duration(FLAGS_duration, FLAGS_ycsb_workload_num);
+		Duration duration(FLAGS_duration, FLAGS_num);
 
 		std::unique_ptr<const char[]> key_guard;
 		Slice key = AllocateKey(&key_guard);
@@ -5838,7 +5836,7 @@ void VerifyDBFromDB(std::string& truth_db_name) {
 		char msg[100];
 		snprintf(msg, sizeof(msg), "( reads:%" PRIu64 " writes:%" PRIu64 \
 			" total:%" PRIu64 " found:%" PRIu64 ")",
-			reads_done, writes_done, FLAGS_ycsb_workload_num, found);
+			reads_done, writes_done, FLAGS_num, found);
 		thread->stats.AddMessage(msg);
 	    }
 
@@ -5930,7 +5928,7 @@ void VerifyDBFromDB(std::string& truth_db_name) {
 
 		int64_t reads_done = 0;
 		int64_t writes_done = 0;
-		Duration duration(FLAGS_duration, FLAGS_ycsb_workload_num);
+		Duration duration(FLAGS_duration, FLAGS_num);
 
 		std::unique_ptr<const char[]> key_guard;
 		Slice key = AllocateKey(&key_guard);
@@ -5996,7 +5994,7 @@ void VerifyDBFromDB(std::string& truth_db_name) {
 		char msg[100];
 		snprintf(msg, sizeof(msg), "( reads:%" PRIu64 " writes:%" PRIu64 \
 			" total:%" PRIu64 " found:%" PRIu64 ")",
-			reads_done, writes_done, FLAGS_ycsb_workload_num, found);
+			reads_done, writes_done, FLAGS_num, found);
 		thread->stats.AddMessage(msg);
 
 	    }
@@ -6094,7 +6092,7 @@ void VerifyDBFromDB(std::string& truth_db_name) {
 		uint64_t per_op_start_time = 0;
 		int64_t reads_done = 0;
 		int64_t writes_done = 0;
-		Duration duration(FLAGS_duration, FLAGS_ycsb_workload_num);
+		Duration duration(FLAGS_duration, FLAGS_num);
 
 		std::unique_ptr<const char[]> key_guard;
 		Slice key = AllocateKey(&key_guard);
@@ -6169,7 +6167,7 @@ void VerifyDBFromDB(std::string& truth_db_name) {
 				char msg[100];
 		snprintf(msg, sizeof(msg), "( reads:%" PRIu64 " writes:%" PRIu64 \
 			" total:%" PRIu64 " found:%" PRIu64 ")",
-			reads_done, writes_done, FLAGS_ycsb_workload_num, found);
+			reads_done, writes_done, FLAGS_num, found);
 		thread->stats.AddMessage(msg);
 
 
@@ -6196,7 +6194,7 @@ void VerifyDBFromDB(std::string& truth_db_name) {
 
 		int64_t reads_done = 0;
 		int64_t writes_done = 0;
-		Duration duration(FLAGS_duration, FLAGS_ycsb_workload_num);
+		Duration duration(FLAGS_duration, FLAGS_num);
 
 		std::unique_ptr<const char[]> key_guard;
 		Slice key = AllocateKey(&key_guard);
@@ -6247,7 +6245,7 @@ void VerifyDBFromDB(std::string& truth_db_name) {
 		char msg[100];
 		snprintf(msg, sizeof(msg), "( reads:%" PRIu64 " writes:%" PRIu64 \
 			" total:%" PRIu64 " found:%" PRIu64 ")",
-			reads_done, writes_done, FLAGS_ycsb_workload_num, found);
+			reads_done, writes_done, FLAGS_num, found);
 		thread->stats.AddMessage(msg);
 	    }
 
