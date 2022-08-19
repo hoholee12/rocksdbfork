@@ -36,19 +36,27 @@
 #cp ~/mntbackup2/fillrandom100gb/* ~/mnt/
 #./run_bench_bigcomp.sh 100 100GB readrandom
 
-if [[ ! -d ~/mntbackup2/ycsb100gb ]]; then
+if [[ ! -d ~/mntbackup2/ycsb10gb ]]; then
 	./sata_ext4.sh
-	./fillrandom_ycsb.sh 102400 bloom
-	mkdir ~/mntbackup2/ycsb100gb
-	cp ~/mnt/* ~/mntbackup2/ycsb100gb/
+	./fillrandom_ycsb.sh 10240 bloom
+	mkdir ~/mntbackup2/ycsb10gb
+	cp ~/mnt/* ~/mntbackup2/ycsb10gb/
 fi
 ./sata_ext4.sh
-cp ~/mntbackup2/ycsb100gb/* ~/mnt/
-./run_bench_bigcomp_ycsb.sh 1024 100GB_bloom_shard_1_1GBread ycsbwkldc bloom 1
+cp ~/mntbackup2/ycsb10gb/* ~/mnt/
+./run_bench_bigcomp_ycsb.sh 1024 10GB_bloom_shard_1_1GBread ycsbwkldc bloom 1
 
 ./sata_ext4.sh
-cp ~/mntbackup2/ycsb100gb/* ~/mnt/
-./run_bench_bigcomp_ycsb.sh 1024 100GB_bloom_shard_8_1GBread ycsbwkldc bloom 8
+cp ~/mntbackup2/ycsb10gb/* ~/mnt/
+./run_bench_bigcomp_ycsb.sh 1024 10GB_bloom_shard_8_1GBread ycsbwkldc bloom 8
+
+./sata_ext4.sh
+cp ~/mntbackup2/ycsb10gb/* ~/mnt/
+./run_bench_bigcomp_ycsb.sh 10240 10GB_bloom_shard_1_10GBread ycsbwkldc bloom 1
+
+./sata_ext4.sh
+cp ~/mntbackup2/ycsb10gb/* ~/mnt/
+./run_bench_bigcomp_ycsb.sh 10240 10GB_bloom_shard_8_10GBread ycsbwkldc bloom 8
 
 #./run_bench_bigcomp.sh 100 fillrandom readrandom
 #./run_bench_bigcomp.sh 100 fillrandom seekrandom

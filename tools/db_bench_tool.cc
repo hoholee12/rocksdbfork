@@ -78,6 +78,8 @@
 #include "utilities/merge_operators/bytesxor.h"
 #include "utilities/persistent_cache/block_cache_tier.h"
 
+#include "utilities/nvm_mod/my_log.h"
+
 #ifdef OS_WIN
 #include <io.h>  // open/close
 #endif
@@ -2023,7 +2025,130 @@ struct Latency {
 	uint64_t stay_queue_time = 0;    //Microsecond
 	uint64_t execute_time = 0;      //Microsecond
     };
+bool CmpLatency(Latency x,Latency y) {
+	return ( x.stay_queue_time + x.execute_time ) < ( y.stay_queue_time + y.execute_time );
+    }
+    uint64_t AllLatency(Latency x) {
+	return ( x.stay_queue_time + x.execute_time );
+    }
+    void ReportLatency(Latency *ops_latency, uint64_t num) {
+      	if( ops_latency == nullptr || num < 10 ) return;
 
+#if 0
+	std::sort(ops_latency, ops_latency + num, CmpLatency);
+	/* for(uint64_t i = 0; i < num; i++) {
+	   printf("%lu\n",ops_latency[i]);
+	   }
+	   printf("done:%lu\n",num); */
+	uint64_t cnt = 0;
+	printf("---------write latency1---------\n");
+	cnt = 0.1 * num;
+	printf("latency: 10%%th(%lu) = [%lu us]\n", cnt, AllLatency(ops_latency[cnt - 1]));
+	cnt = 0.2 * num;
+	printf("latency: 20%%th(%lu) = [%lu us]\n", cnt, AllLatency(ops_latency[cnt - 1]));
+	cnt = 0.3 * num;
+	printf("latency: 30%%th(%lu) = [%lu us]\n", cnt, AllLatency(ops_latency[cnt - 1]));
+	cnt = 0.4 * num;
+	printf("latency: 40%%th(%lu) = [%lu us]\n", cnt, AllLatency(ops_latency[cnt - 1]));
+	cnt = 0.5 * num;
+	printf("latency: 50%%th(%lu) = [%lu us]\n", cnt, AllLatency(ops_latency[cnt - 1]));
+	cnt = 0.6 * num;
+	printf("latency: 60%%th(%lu) = [%lu us]\n", cnt, AllLatency(ops_latency[cnt - 1]));
+	cnt = 0.7 * num;
+	printf("latency: 70%%th(%lu) = [%lu us]\n", cnt, AllLatency(ops_latency[cnt - 1]));
+	cnt = 0.8 * num;
+	printf("latency: 80%%th(%lu) = [%lu us]\n", cnt, AllLatency(ops_latency[cnt - 1]));
+	cnt = 0.9 * num;
+	printf("latency: 90%%th(%lu) = [%lu us]\n", cnt, AllLatency(ops_latency[cnt - 1]));
+	cnt = 0.99 * num;
+	printf("latency: 99%%th(%lu) = [%lu us]\n", cnt, AllLatency(ops_latency[cnt - 1]));
+	cnt = 0.999 * num;
+	printf("latency: 99.9%%th(%lu) = [%lu us]\n", cnt, AllLatency(ops_latency[cnt - 1]));
+	cnt = 0.9999 * num;
+	printf("latency: 99.99%%th(%lu) = [%lu us]\n", cnt, AllLatency(ops_latency[cnt - 1]));
+	cnt = 0.99999 * num;
+	printf("latency: 99.999%%th(%lu) = [%lu us]\n", cnt, AllLatency(ops_latency[cnt - 1]));
+	printf("-------------------------------\n");
+
+	for(uint64_t i = 0; i < num; i++) {
+	    RECORD_INFO(4,"%lu,%lu,%lu\n",AllLatency(ops_latency[i]),ops_latency[i].stay_queue_time,ops_latency[i].execute_time);
+	}
+#endif
+    }
+    void ReportLatency2(uint64_t *ops_latency, uint64_t num) {
+	uint64_t total_sum = 0;
+	uint64_t cnt = 0;
+	uint64_t avg_latency = 0;
+	uint64_t max_valid_cnt = 0;
+	uint64_t last_done = 0;
+
+	printf("ReportLatency2\n");
+	num = FLAGS_num * FLAGS_threads;
+
+	if( ops_latency == nullptr || num < 10 ) 
+	    return;
+
+	for(uint64_t i = 0; i < num; i++) {
+	    if(ops_latency[i] > 0) {
+		RECORD_INFO(4,"%lu\n",ops_latency[i]/1000);
+		total_sum += ops_latency[i];
+		max_valid_cnt++;
+	    }
+	}
+
+	num = max_valid_cnt;
+	std::sort(ops_latency, ops_latency + num);
+
+
+	printf("done:%lu\n",num);
+	printf("last_done: %lu\n", last_done);
+
+	cnt = 0;
+	avg_latency = total_sum / num;
+	//avg_latency2 = total_sum2 / last_done;
+/*
+	printf("---------LAST 10M average latency---------\n");
+	printf("avgerage latency2: [%lu us] for 10M reqs\n", avg_latency2/1000);
+	cnt = 0.5 * last_done;
+	printf("latency: 50%%th(%lu) = [%lu us]\n", cnt, last_ops_latency[cnt - 1]/1000);
+	cnt = 0.99 * last_done;
+	printf("latency: 99%%th(%lu) = [%lu us]\n", cnt, last_ops_latency[cnt - 1]/1000);
+	*/
+
+
+	printf("---------average latency---------\n");
+	printf("avgerage latency: [%lu us]\n", avg_latency/1000);
+	printf("---------tail latency---------\n");
+	cnt = 0.1 * num;
+	printf("latency: 10%%th(%lu) = [%lu us]\n", cnt, ops_latency[cnt - 1]/1000);
+	cnt = 0.2 * num;
+	printf("latency: 20%%th(%lu) = [%lu us]\n", cnt, ops_latency[cnt - 1]/1000);
+	cnt = 0.3 * num;
+	printf("latency: 30%%th(%lu) = [%lu us]\n", cnt, ops_latency[cnt - 1]/1000);
+	cnt = 0.4 * num;
+	printf("latency: 40%%th(%lu) = [%lu us]\n", cnt, ops_latency[cnt - 1]/1000);
+	cnt = 0.5 * num;
+	printf("latency: 50%%th(%lu) = [%lu us]\n", cnt, ops_latency[cnt - 1]/1000);
+	cnt = 0.6 * num;
+	printf("latency: 60%%th(%lu) = [%lu us]\n", cnt, ops_latency[cnt - 1]/1000);
+	cnt = 0.7 * num;
+	printf("latency: 70%%th(%lu) = [%lu us]\n", cnt, ops_latency[cnt - 1]/1000);
+	cnt = 0.8 * num;
+	printf("latency: 80%%th(%lu) = [%lu us]\n", cnt, ops_latency[cnt - 1]/1000);
+	cnt = 0.9 * num;
+	printf("latency: 90%%th(%lu) = [%lu us]\n", cnt, ops_latency[cnt - 1]/1000);
+	cnt = 0.95 * num;
+	printf("latency: 95%%th(%lu) = [%lu us]\n", cnt, ops_latency[cnt - 1]/1000);
+	cnt = 0.99 * num;
+	printf("latency: 99%%th(%lu) = [%lu us]\n", cnt, ops_latency[cnt - 1]/1000);
+	cnt = 0.999 * num;
+	printf("latency: 99.9%%th(%lu) = [%lu us]\n", cnt, ops_latency[cnt - 1]/1000);
+	cnt = 0.9999 * num;
+	printf("latency: 99.99%%th(%lu) = [%lu us]\n", cnt, ops_latency[cnt - 1]/1000);
+	cnt = 0.99999 * num;
+	printf("latency: 99.999%%th(%lu) = [%lu us]\n", cnt, ops_latency[cnt - 1]/1000);
+	printf("-------------------------------\n");
+    }
 // State shared by all concurrent executions of the same benchmark.
 struct SharedState {
 	port::Mutex mu;
@@ -2042,10 +2167,6 @@ struct SharedState {
 	long num_initialized;
 	long num_done;
 	bool start;
-
-	/////for fillrandomcontrolrequest
-	port::Mutex queue_mu[REQUEST_QUEUE];   //mutex of op_queues
-	std::queue<uint64_t> op_queues[REQUEST_QUEUE];  // request queue, save the time to join the queue
 
 	uint64_t request_num = 0;
 	std::shared_ptr<RateLimiter> request_rate_limiter;
@@ -3069,6 +3190,45 @@ void VerifyDBFromDB(std::string& truth_db_name) {
                                              FLAGS_report_interval_seconds));
     }
 
+    //if ( FLAGS_report_ops_latency && ( method == &Benchmark::WriteRandom || method == &Benchmark::YCSBWorkloadA)) {
+		if ( FLAGS_report_ops_latency && (method == &Benchmark::YCSBWorkloadLoad)) {
+		    shared.latencys = new uint64_t[FLAGS_num * n];
+		    //n = n + 1;
+		    shared.total = n;  //need extra thread to record latency and throughput per second
+		}
+		//if ( FLAGS_report_ops_latency && ( method == &Benchmark::WriteRandom || method == &Benchmark::YCSBWorkloadA)) {
+		if ( FLAGS_report_ops_latency && (method == &Benchmark::YCSBWorkloadA)) {
+		    shared.latencys = new uint64_t[FLAGS_num * n];
+		    //n = n + 1;
+		    shared.total = n;  //need extra thread to record latency and throughput per second
+		}
+		if ( FLAGS_report_ops_latency && (method == &Benchmark::YCSBWorkloadB)) {
+		    shared.latencys = new uint64_t[FLAGS_num * n];
+		    //n = n + 1;
+		    shared.total = n;  //need extra thread to record latency and throughput per second
+		}
+		if ( FLAGS_report_ops_latency && (method == &Benchmark::YCSBWorkloadC)) {
+		    shared.latencys = new uint64_t[FLAGS_num * n];
+		    //n = n + 1;
+		    shared.total = n;  //need extra thread to record latency and throughput per second
+		}
+		if ( FLAGS_report_ops_latency && (method == &Benchmark::YCSBWorkloadD)) {
+		    shared.latencys = new uint64_t[FLAGS_num * n];
+		    //n = n + 1;
+		    shared.total = n;  //need extra thread to record latency and throughput per second
+		}
+
+		if ( FLAGS_report_ops_latency && (method == &Benchmark::YCSBWorkloadE)) {
+		    shared.latencys = new uint64_t[FLAGS_num * n];
+		    //n = n + 1;
+		    shared.total = n;  //need extra thread to record latency and throughput per second
+		}
+		if ( FLAGS_report_ops_latency && (method == &Benchmark::YCSBWorkloadF)) {
+		    shared.latencys = new uint64_t[FLAGS_num * n];
+		    n = n + 1;
+		    shared.total = n;  //need extra thread to record latency and throughput per second
+		}
+
     ThreadArg* arg = new ThreadArg[n];
 
     for (int i = 0; i < n; i++) {
@@ -3117,6 +3277,43 @@ void VerifyDBFromDB(std::string& truth_db_name) {
     }
     merge_stats.Report(name);
 
+		ReportLatency(shared.ops_latency, shared.ops_done);
+		ReportLatency2(shared.latencys, shared.ops_num);
+
+		if ( FLAGS_report_fillrandom_latency && method == &Benchmark::WriteRandom) {
+		    delete[] shared.latencys;
+		    shared.latencys = nullptr;
+		}
+		//if ( FLAGS_report_ops_latency && ( method == &Benchmark::WriteRandom || method == &Benchmark::YCSBWorkloadA)) {
+		if ( FLAGS_report_ops_latency && (method == &Benchmark::YCSBWorkloadLoad)) {
+		    delete[] shared.latencys;
+		    shared.latencys = nullptr;
+		}
+		//if ( FLAGS_report_ops_latency && ( method == &Benchmark::WriteRandom || method == &Benchmark::YCSBWorkloadA)) {
+		if ( FLAGS_report_ops_latency && (method == &Benchmark::YCSBWorkloadA)) {
+		    delete[] shared.latencys;
+		    shared.latencys = nullptr;
+		}
+		if ( FLAGS_report_ops_latency && (method == &Benchmark::YCSBWorkloadB)) {
+		    delete[] shared.latencys;
+		    shared.latencys = nullptr;
+		}
+		if ( FLAGS_report_ops_latency && (method == &Benchmark::YCSBWorkloadC)) {
+		    delete[] shared.latencys;
+		    shared.latencys = nullptr;
+		}
+		if ( FLAGS_report_ops_latency && (method == &Benchmark::YCSBWorkloadD)) {
+		    delete[] shared.latencys;
+		    shared.latencys = nullptr;
+		}
+		if ( FLAGS_report_ops_latency && (method == &Benchmark::YCSBWorkloadE)) {
+		    delete[] shared.latencys;
+		    shared.latencys = nullptr;
+		}
+		if ( FLAGS_report_ops_latency && (method == &Benchmark::YCSBWorkloadF)) {
+		    delete[] shared.latencys;
+		    shared.latencys = nullptr;
+		}
     for (int i = 0; i < n; i++) {
       delete arg[i].thread;
     }

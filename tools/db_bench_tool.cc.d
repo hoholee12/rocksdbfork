@@ -70,4 +70,5 @@ tools/db_bench_tool.cc.d tools/db_bench_tool.o: tools/db_bench_tool.cc \
  utilities/persistent_cache/persistent_cache_util.h \
  utilities/persistent_cache/block_cache_tier_metadata.h \
  utilities/persistent_cache/hash_table.h \
- utilities/persistent_cache/hash_table_evictable.h memtable/skiplist.h
+ utilities/persistent_cache/hash_table_evictable.h memtable/skiplist.h \
+ utilities/nvm_mod/my_log.h

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo ycsbwkldload
-echo dataset $((9039*$1))
+echo dataset $((1024*$1))
 
 
 if [[ $2 == "bloom" ]]; then
@@ -14,10 +14,12 @@ mkdir results
 #generate l0
 sudo time ./db_bench \
  -benchmarks="ycsbwkldload" \
- -num=$((9039*$1)) \
+ -num=$((1024*$1)) \
  -threads=1 \
  -histogram \
  -statistics \
+ -key_size=16 \
+ -value_size=1008 \
  -db=/home/jeongho/mnt/ \
  -use_direct_io_for_flush_and_compaction=false \
  -use_direct_reads=false \
