@@ -42,22 +42,13 @@ if [[ ! -d ~/mntbackup2/ycsb100gb ]]; then
 	mkdir ~/mntbackup2/ycsb100gb
 	cp ~/mnt/* ~/mntbackup2/ycsb100gb/
 fi
+./sata_ext4.sh
+cp ~/mntbackup2/ycsb100gb/* ~/mnt/
+./run_bench_bigcomp_ycsb.sh 1024 100GB_bloom_shard_1_1GBread ycsbwkldc bloom 1
 
 ./sata_ext4.sh
 cp ~/mntbackup2/ycsb100gb/* ~/mnt/
-./run_bench_bigcomp_ycsb.sh 10240 100GB_bloom_shard_1_10GBread ycsbwkldc bloom 1
-
-./sata_ext4.sh
-cp ~/mntbackup2/ycsb100gb/* ~/mnt/
-./run_bench_bigcomp_ycsb.sh 10240 100GB_bloom_shard_8_10GBread ycsbwkldc bloom 8
-
-./sata_ext4.sh
-cp ~/mntbackup2/ycsb100gb/* ~/mnt/
-./run_bench_bigcomp_ycsb.sh 102400 100GB_bloom_shard_1_100GBread ycsbwkldc bloom 1
-
-./sata_ext4.sh
-cp ~/mntbackup2/ycsb100gb/* ~/mnt/
-./run_bench_bigcomp_ycsb.sh 102400 100GB_bloom_shard_8_100GBread ycsbwkldc bloom 8
+./run_bench_bigcomp_ycsb.sh 1024 100GB_bloom_shard_8_1GBread ycsbwkldc bloom 8
 
 #./run_bench_bigcomp.sh 100 fillrandom readrandom
 #./run_bench_bigcomp.sh 100 fillrandom seekrandom
